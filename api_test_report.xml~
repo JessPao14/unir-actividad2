@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="0.090" timestamp="2025-11-02T20:25:54.033353-05:00" hostname="Jessi"><testcase classname="test.rest.api_test.TestApi" name="test_api_add" time="0.002"><failure message="AssertionError: unexpectedly None : URL no configurada">self = &lt;rest.api_test.TestApi testMethod=test_api_add&gt;
+
+    def setUp(self):
+&gt;       self.assertIsNotNone(BASE_URL, "URL no configurada")
+E       AssertionError: unexpectedly None : URL no configurada
+
+test\rest\api_test.py:15: AssertionError</failure></testcase><testcase classname="test.rest.api_test.TestApi" name="test_api_add_success" time="0.000"><failure message="AssertionError: unexpectedly None : URL no configurada">self = &lt;rest.api_test.TestApi testMethod=test_api_add_success&gt;
+
+    def setUp(self):
+&gt;       self.assertIsNotNone(BASE_URL, "URL no configurada")
+E       AssertionError: unexpectedly None : URL no configurada
+
+test\rest\api_test.py:15: AssertionError</failure></testcase><testcase classname="test.rest.api_test.TestApi" name="test_api_divide_by_zero" time="0.000"><failure message="AssertionError: unexpectedly None : URL no configurada">self = &lt;rest.api_test.TestApi testMethod=test_api_divide_by_zero&gt;
+
+    def setUp(self):
+&gt;       self.assertIsNotNone(BASE_URL, "URL no configurada")
+E       AssertionError: unexpectedly None : URL no configurada
+
+test\rest\api_test.py:15: AssertionError</failure></testcase><testcase classname="test.rest.api_test.TestApi" name="test_api_log10_fail" time="0.000"><failure message="AssertionError: unexpectedly None : URL no configurada">self = &lt;rest.api_test.TestApi testMethod=test_api_log10_fail&gt;
+
+    def setUp(self):
+&gt;       self.assertIsNotNone(BASE_URL, "URL no configurada")
+E       AssertionError: unexpectedly None : URL no configurada
+
+test\rest\api_test.py:15: AssertionError</failure></testcase><testcase classname="test.rest.api_test.TestApi" name="test_api_substract_success" time="0.001"><failure message="AssertionError: unexpectedly None : URL no configurada">self = &lt;rest.api_test.TestApi testMethod=test_api_substract_success&gt;
+
+    def setUp(self):
+&gt;       self.assertIsNotNone(BASE_URL, "URL no configurada")
+E       AssertionError: unexpectedly None : URL no configurada
+
+test\rest\api_test.py:15: AssertionError</failure></testcase></testsuite></testsuites>

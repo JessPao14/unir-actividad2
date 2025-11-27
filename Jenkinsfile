@@ -1,119 +1,45 @@
+
 pipeline {
-    agent any
-
-    environment {
-        IMAGE_NAME = "pytest-lab"
-    }
-
+    agent { label 'docker' }
     stages {
-
-        stage('Checkout') {
+        stage('Source') {
             steps {
-                checkout scm
+                git 'https://github.com/JessPao14/unir-actividad2.git'
             }
         }
-
-        stage('Build Docker Image') {
+        stage('Build') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME} ."
-                }
+                echo 'Building stage!'
+                sh 'make build'
             }
         }
-
-        stage('Run Unit Tests') {
+        stage('Unit tests') {
             steps {
-                script {
-                    sh """
-                    docker run --rm \
-                        -v ${WORKSPACE}:/app \
-                        -w /opt/calc \
-                        ${IMAGE_NAME} \
-                        pytest tests/unit --junitxml=unit_test_report.xml
-                    """
-                }
-            }
-
-            post {
-                always {
-                    junit 'unit_test_report.xml'
-                }
+                sh 'make test-unit'
+                archiveArtifacts artifacts: 'results/*.xml'
             }
         }
-
-        stage('Run REST Tests') {
+        stage('API tests') {
             steps {
-                script {
-                    sh """
-                    docker run --rm \
-                        -v ${WORKSPACE}:/app \
-                        -w /opt/calc \
-                        ${IMAGE_NAME} \
-                        pytest tests/rest --junitxml=api_test_report.xml
-                    """
-                }
-            }
-
-            post {
-                always {
-                    junit 'api_test_report.xml'
-                }
+                sh 'make test-api'
+                archiveArtifacts artifacts: 'results/api/*.xml'
             }
         }
-
-        stage('Run BDD Tests') {
+        stage('E2E tests') {
             steps {
-                script {
-                    sh """
-                    docker run --rm \
-                        -v ${WORKSPACE}:/app \
-                        -w /opt/calc \
-                        ${IMAGE_NAME} \
-                        pytest tests/behavior --junitxml=bdd_test_report.xml || true
-                    """
-                }
-            }
-
-            post {
-                always {
-                    junit 'bdd_test_report.xml'
-                }
+                sh 'make test-e2e'
+                archiveArtifacts artifacts: 'results/e2e/*.xml'
             }
         }
-
-        stage('Run E2E (Cypress)') {
-            steps {
-                dir('tests/e2e') {
-                    sh """
-                    npm install
-                    npx cypress run || true
-                    """
-                }
-            }
-
-            post {
-                always {
-                    archiveArtifacts artifacts: 'tests/e2e/cypress/videos/**/*', allowEmptyArchive: true
-                }
-            }
-        }
-
-        stage('Run JMeter Tests') {
-            steps {
-                dir('tests/jmeter') {
-                    sh """
-                    docker build -t jmeter-test .
-                    docker run --rm jmeter-test
-                    """
-                }
-            }
-        }
-
     }
-
     post {
         always {
-            echo "Pipeline completado."
+            junit 'results/**/*_result.xml'
+            cleanWs()
+        }
+        failure {
+            echo "Sending email: Job ${env.JOB_NAME}, Build ${env.BUILD_NUMBER}"
+            // mail to: 'tuemail@dominio.com', subject: "Pipeline Failed", body: "Job ${env.JOB_NAME}, Build ${env.BUILD_NUMBER}"
         }
     }
 }

@@ -1,1 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="15" time="0.117" timestamp="2025-11-02T20:22:00.268654-05:00" hostname="Jessi"><testcase classname="test.unit.calc_test.TestCalculate" name="test_add_method_fails_with_nan_parameter" time="0.002" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_add_method_returns_correct_result" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_divide_method_fails_with_division_by_zero" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_divide_method_fails_with_nan_parameter" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_divide_method_returns_correct_result" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_log10_method_fails_with_division_by_zero" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_log10_method_returns_correct_result" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_multiply_method_fails_with_nan_parameter" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_multiply_method_returns_correct_result" time="0.001" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_sqrt_method_fails_with_division_by_zero" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_sqrt_method_returns_correct_result" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_substract_method_fails_with_nan_parameter" time="0.000" /><testcase classname="test.unit.calc_test.TestCalculate" name="test_substract_method_returns_correct_result" time="0.001" /><testcase classname="test.unit.util_test.TestUtil" name="test_convert_to_number_correct_param" time="0.001" /><testcase classname="test.unit.util_test.TestUtil" name="test_convert_to_number_invalid_type" time="0.001" /></testsuite></testsuites>
+
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+    <testsuite name="pytest" errors="0" failures="0" skipped="0" tests="15" time="0.117" timestamp="2025-11-02T20:22:00.268654-05:00" hostname="Jessi">
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_add_method_fails_with_nan_parameter" time="0.002" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_add_method_returns_correct_result" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_divide_method_fails_with_division_by_zero" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_divide_method_fails_with_nan_parameter" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_divide_method_returns_correct_result" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_log10_method_fails_with_division_by_zero" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_log10_method_returns_correct_result" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_multiply_method_fails_with_nan_parameter" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_multiply_method_returns_correct_result" time="0.001" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_sqrt_method_fails_with_division_by_zero" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_sqrt_method_returns_correct_result" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_substract_method_fails_with_nan_parameter" time="0.000" />
+        <testcase classname="test.unit.calc_test.TestCalculate" name="test_substract_method_returns_correct_result" time="0.001" />
+        <testcase classname="test.unit.util_test.TestUtil" name="test_convert_to_number_correct_param" time="0.001" />
+        <testcase classname="test.unit.util_test.TestUtil" name="test_convert_to_number_invalid_type" time="0.001" />
+    </testsuite>
+</testsuites>

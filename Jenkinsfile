@@ -37,7 +37,7 @@ pipeline {
         }
         failure {
             echo "Enviando correo: Job ${env.JOB_NAME}, Build ${env.BUILD_NUMBER} falló."
-            // mail to: 'tuemail@dominio.com', subject: "Pipeline Failed", body: "Job ${env.JOB_NAME}, Build ${env.BUILD_NUMBER}"
+            mail to: 'jsscsimba753@gmail.com', subject: "Pipeline Failed", body: "Job ${env.JOB_NAME}, Build ${env.BUILD_NUMBER}"
         }
     }
 }

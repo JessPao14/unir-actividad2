@@ -1,16 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'
-            args '-v $PWD:/workspace'
-        }
-    }
+    agent any
     stages {
         stage('Test') {
             steps {
-                sh 'pip install -r requirements.txt'
-                sh 'mkdir -p results/unit'
-                sh 'pytest --junitxml=results/unit/unit_result.xml tests/unit/'
+                sh 'docker run --rm -v $PWD:/workspace -w /workspace python:3.11 bash -c "pip install -r requirements.txt && mkdir -p results/unit && pytest --junitxml=results/unit/unit_result.xml tests/unit/"'
             }
         }
         stage('Archive Results') {

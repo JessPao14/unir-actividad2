@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'docker run --rm -v $PWD:/workspace -w /workspace python:3.11 bash -c "pip install -r requirements.txt && mkdir -p results/unit && pytest --junitxml=results/unit/unit_result.xml tests/unit/"'
+                sh 'docker run --rm -v $PWD:/workspace -w /workspace python:3.11 bash -c "pip install -r /workspace/requirements.txt && mkdir -p results/unit && pytest --junitxml=results/unit/unit_result.xml tests/unit/"'
             }
         }
         stage('Archive Results') {

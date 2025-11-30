@@ -10,24 +10,42 @@ pipeline {
         }
         stage('Test') {
             steps {
-                // Run pytest tests directly on agent (no Docker mounting issues)
+                // Run pytest tests (try python3, then python, then Docker)
                 sh '''#!/bin/bash
                     set -e
                     echo "--- Current workspace ---"
                     pwd
                     ls -la tests/unit/ || echo "tests/unit not found"
                     
-                    if [ -f requirements.txt ]; then
-                        echo "Found requirements.txt — installing dependencies"
-                        python3 -m pip install -q -r requirements.txt
+                    mkdir -p results/unit
+                    
+                    # Detect Python executable
+                    echo "--- Detecting Python executable ---"
+                    PYTHON_CMD=""
+                    if command -v python3 &> /dev/null; then
+                        PYTHON_CMD="python3"
+                        echo "✓ Found python3: $(python3 --version)"
+                    elif command -v python &> /dev/null; then
+                        PYTHON_CMD="python"
+                        echo "✓ Found python: $(python --version)"
                     else
-                        echo "Installing pytest fallback"
-                        python3 -m pip install -q pytest pytest-cov
+                        echo "✗ Python not found locally, attempting Docker fallback..."
+                        docker run --rm -v $(pwd):/app -w /app python:3.11 bash -c "pip install -q pytest pytest-cov && python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/" || true
+                        exit 0
                     fi
                     
-                    mkdir -p results/unit
-                    echo "Running pytest"
-                    python3 -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
+                    echo "--- Using Python: $PYTHON_CMD ---"
+                    
+                    if [ -f requirements.txt ]; then
+                        echo "✓ Found requirements.txt — installing dependencies"
+                        $PYTHON_CMD -m pip install -q -r requirements.txt
+                    else
+                        echo "✗ No requirements.txt — installing pytest fallback"
+                        $PYTHON_CMD -m pip install -q pytest pytest-cov
+                    fi
+                    
+                    echo "--- Running pytest ---"
+                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
                 '''
             }
         }

@@ -30,7 +30,7 @@ pipeline {
                         echo "✓ Found python: $(python --version)"
                     else
                         echo "✗ Python not found locally, attempting Docker fallback..."
-                        docker run --rm -v $(pwd):/app -w /app python:3.11 bash -c "pip install -q pytest pytest-cov && python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/" || true
+                        docker run --rm -v /var/jenkins_home/workspace/pytest-laboratorio:/app -w /app python:3.11 bash -c "pip install -q pytest pytest-cov && python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/" || true
                         exit 0
                     fi
                     

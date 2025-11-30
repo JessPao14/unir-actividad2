@@ -11,7 +11,7 @@ pipeline {
                 stage('Test') {
                         steps {
                                 // Run tests inside an ephemeral Python container, mounting the full workspace
-                                sh '''#!/bin/bash
+                                sh """#!/bin/bash
 docker run --rm -v ${WORKSPACE}:/workspace -w /workspace python:3.11 bash -lc '
     set -e
     echo "--- workspace root (inside container) ---"
@@ -32,7 +32,7 @@ docker run --rm -v ${WORKSPACE}:/workspace -w /workspace python:3.11 bash -lc '
     echo "Running pytest against /workspace/tests/unit (if present)"
     pytest --junitxml=results/unit/unit_result.xml /workspace/tests/unit || pytest --junitxml=results/unit/unit_result.xml -k "not none" || true
 '
-'''
+"""
                         }
                 }
         stage('Archive Results') {

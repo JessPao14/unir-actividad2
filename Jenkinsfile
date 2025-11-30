@@ -12,7 +12,7 @@ pipeline {
                         steps {
                                 // Run tests inside an ephemeral Python container, mounting the full workspace
                                 sh '''#!/bin/bash
-docker run --rm -v $PWD:/workspace -w /workspace python:3.11 bash -lc '
+docker run --rm -v ${WORKSPACE}:/workspace -w /workspace python:3.11 bash -lc '
     set -e
     echo "--- workspace root (inside container) ---"
     ls -la /workspace || true

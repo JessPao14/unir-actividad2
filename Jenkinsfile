@@ -36,30 +36,25 @@ pipeline {
                         docker run --rm -i python:3.11 bash -lc '
                             set -e
                             mkdir -p /workspace
+                            # extract incoming workspace tar
                             tar -xf - -C /workspace
-                            echo "--- Docker extracted workspace ---"
-                            ls -la /workspace || true
+                            # send diagnostics to stderr so stdout remains a pure tar stream
+                            >&2 echo "--- Docker extracted workspace ---"
+                            ls -la /workspace >&2 || true
                             # ensure we run from workspace so pytest writes into /workspace/results
                             cd /workspace
-                            pip install -q pytest pytest-cov
+                            python -m pip install -q pytest pytest-cov >&2
                             # run pytest without hard-coded paths so it auto-discovers tests
-                            python -m pytest --junitxml=results/unit/unit_result.xml || true
-                            # stream results back to host (if any)
+                            python -m pytest --junitxml=results/unit/unit_result.xml >&2 || true
+                            # stream results back to host (only tar bytes on stdout)
                             if [ -d results/unit ]; then
                                 tar -C /workspace -cf - results/unit
-                            else
-                                # nothing to stream
-                                true
                             fi
                         ' | {
                             # extract any returned results back into workspace on the agent
                             set -e
-                            if [ -t 0 ]; then
-                                # no stdin stream
-                                true
-                            else
-                                tar -xf - -C "${WORKSPACE}" || true
-                            fi
+                            # if there's tar data on stdin, extract it into the workspace
+                            tar -xf - -C "${WORKSPACE}" || true
                         }
                         exit 0
                     fi

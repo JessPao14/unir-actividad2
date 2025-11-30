@@ -8,33 +8,29 @@ pipeline {
                 sh 'ls -la'
             }
         }
-                stage('Test') {
-                        steps {
-                                // Run tests inside an ephemeral Python container, mounting the full workspace
-                                sh """#!/bin/bash
-docker run --rm -v ${WORKSPACE}:/workspace -w /workspace python:3.11 bash -lc '
-    set -e
-    echo "--- workspace root (inside container) ---"
-    ls -la /workspace || true
-    echo "--- /workspace/tests ---"
-    ls -la /workspace/tests || true
-    echo "--- /workspace/tests/unit ---"
-    ls -la /workspace/tests/unit || true
-
-    if [ -f /workspace/requirements.txt ]; then
-        echo "Found requirements.txt — installing dependencies"
-        pip install -r /workspace/requirements.txt
-    else
-        echo "No requirements.txt found — installing pytest fallback"
-        pip install pytest pytest-cov
-    fi
-    mkdir -p results/unit
-    echo "Running pytest against /workspace/tests/unit (if present)"
-    pytest --junitxml=results/unit/unit_result.xml /workspace/tests/unit || pytest --junitxml=results/unit/unit_result.xml -k "not none" || true
-'
-"""
-                        }
-                }
+        stage('Test') {
+            steps {
+                // Run pytest tests directly on agent (no Docker mounting issues)
+                sh '''#!/bin/bash
+                    set -e
+                    echo "--- Current workspace ---"
+                    pwd
+                    ls -la tests/unit/ || echo "tests/unit not found"
+                    
+                    if [ -f requirements.txt ]; then
+                        echo "Found requirements.txt — installing dependencies"
+                        python3 -m pip install -q -r requirements.txt
+                    else
+                        echo "Installing pytest fallback"
+                        python3 -m pip install -q pytest pytest-cov
+                    fi
+                    
+                    mkdir -p results/unit
+                    echo "Running pytest"
+                    python3 -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
+                '''
+            }
+        }
         stage('Archive Results') {
             steps {
                 archiveArtifacts artifacts: 'results/unit/*.xml', allowEmptyArchive: true

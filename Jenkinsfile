@@ -30,15 +30,37 @@ pipeline {
                         echo "✓ Found python: $(python --version)"
                     else
                         echo "✗ Python not found locally, attempting Docker tar-copy fallback..."
-                        # Copy workspace into container via tar stream to avoid volume mount issues
-                        tar -C "${WORKSPACE}" -cf - . | docker run --rm -i python:3.11 bash -lc '
-                            mkdir -p /workspace && tar -xf - -C /workspace
+                        # Copy workspace into container via tar stream to avoid volume mount issues.
+                        # Run tests inside /workspace and stream back the results/unit directory.
+                        tar -C "${WORKSPACE}" -cf - . | \
+                        docker run --rm -i python:3.11 bash -lc '
+                            set -e
+                            mkdir -p /workspace
+                            tar -xf - -C /workspace
                             echo "--- Docker extracted workspace ---"
                             ls -la /workspace || true
-                            ls -la /workspace/tests/unit/ 2>/dev/null || echo "tests/unit not found"
+                            # ensure we run from workspace so pytest writes into /workspace/results
+                            cd /workspace
                             pip install -q pytest pytest-cov
-                            python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
-                        '
+                            # run pytest without hard-coded paths so it auto-discovers tests
+                            python -m pytest --junitxml=results/unit/unit_result.xml || true
+                            # stream results back to host (if any)
+                            if [ -d results/unit ]; then
+                                tar -C /workspace -cf - results/unit
+                            else
+                                # nothing to stream
+                                true
+                            fi
+                        ' | {
+                            # extract any returned results back into workspace on the agent
+                            set -e
+                            if [ -t 0 ]; then
+                                # no stdin stream
+                                true
+                            else
+                                tar -xf - -C "${WORKSPACE}" || true
+                            fi
+                        }
                         exit 0
                     fi
                     
@@ -53,7 +75,8 @@ pipeline {
                     fi
                     
                     echo "--- Running pytest ---"
-                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
+                    # run pytest without a rigid path so it discovers tests wherever they are
+                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml || true
                 '''
             }
         }

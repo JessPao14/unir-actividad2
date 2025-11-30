@@ -43,7 +43,11 @@ pipeline {
                             ls -la /workspace >&2 || true
                             # ensure we run from workspace so pytest writes into /workspace/results
                             cd /workspace
-                            python -m pip install -q pytest pytest-cov >&2
+                            if [ -f requirements.txt ]; then
+                                python -m pip install -q -r requirements.txt >&2
+                            else
+                                python -m pip install -q pytest pytest-cov >&2
+                            fi
                             # run pytest without hard-coded paths so it auto-discovers tests
                             python -m pytest --junitxml=results/unit/unit_result.xml >&2 || true
                             # stream results back to host (only tar bytes on stdout)

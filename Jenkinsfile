@@ -29,8 +29,16 @@ pipeline {
                         PYTHON_CMD="python"
                         echo "✓ Found python: $(python --version)"
                     else
-                        echo "✗ Python not found locally, attempting Docker fallback..."
-                        docker run --rm -v /var/jenkins_home/workspace/pytest-laboratorio:/workspace -w /workspace python:3.11 bash -c "echo '--- Docker workspace contents ---' && ls -la /workspace && echo '--- Docker tests directory ---' && ls -la /workspace/tests/unit/ 2>/dev/null || echo 'tests/unit not found' && pip install -q pytest pytest-cov && python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true" || true
+                        echo "✗ Python not found locally, attempting Docker tar-copy fallback..."
+                        # Copy workspace into container via tar stream to avoid volume mount issues
+                        tar -C "${WORKSPACE}" -cf - . | docker run --rm -i python:3.11 bash -lc '
+                            mkdir -p /workspace && tar -xf - -C /workspace
+                            echo "--- Docker extracted workspace ---"
+                            ls -la /workspace || true
+                            ls -la /workspace/tests/unit/ 2>/dev/null || echo "tests/unit not found"
+                            pip install -q pytest pytest-cov
+                            python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
+                        '
                         exit 0
                     fi
                     

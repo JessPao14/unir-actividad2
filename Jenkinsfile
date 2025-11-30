@@ -3,14 +3,12 @@ pipeline {
     stages {
         stage('Checkout repository') {
             steps {
-                // Force a full checkout into the workspace (lightweight checkout may only fetch the Jenkinsfile)
                 checkout scm
                 sh 'ls -la'
             }
         }
         stage('Test') {
             steps {
-                // Run pytest tests (try python3, then python, then Docker)
                 sh '''#!/bin/bash
                     set -e
                     echo "--- Current workspace ---"
@@ -90,7 +88,33 @@ pipeline {
             junit testResults: 'results/unit/*.xml', allowEmptyResults: true
         }
         failure {
-            echo "Enviando correo: Job ${env.JOB_NAME}, Build ${env.BUILD_NUMBER} falló."
+            // Comprobación del cuerpo del correo (echo para verificar variables)
+            sh '''
+                echo "========== VERIFICACIÓN DEL CUERPO DEL CORREO =========="
+                echo "Asunto: Build Failed - ${JOB_NAME} #${BUILD_NUMBER}"
+                echo "Cuerpo del correo:"
+                echo "===================="
+                echo "El trabajo '${JOB_NAME}' (Ejecución #${BUILD_NUMBER}) ha fallado."
+                echo "Por favor, revisa los logs para más información."
+                echo "===================="
+                echo ""
+            '''
+            
+            // Envío de correo (descomenta para activar si Jenkins tiene configurado el servidor SMTP)
+            // emailext(
+            //     to: 'tu-email@ejemplo.com',
+            //     subject: "Build Failed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            //     body: '''El trabajo '${JOB_NAME}' (Ejecución #${BUILD_NUMBER}) ha fallado.
+            // Por favor, revisa los logs en Jenkins para más información:
+            // ${BUILD_URL}
+            // 
+            // Detalles:
+            // - Nombre del trabajo: ${JOB_NAME}
+            // - Número de ejecución: ${BUILD_NUMBER}
+            // - URL del build: ${BUILD_URL}
+            // ''',
+            //     mimeType: 'text/plain'
+            // )
         }
     }
 }

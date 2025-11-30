@@ -48,8 +48,8 @@ pipeline {
                             else
                                 python -m pip install -q pytest pytest-cov >&2
                             fi
-                            # run pytest without hard-coded paths so it auto-discovers tests
-                            python -m pytest --junitxml=results/unit/unit_result.xml >&2 || true
+                            # run only unit tests (no external service dependencies)
+                            python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ >&2 || true
                             # stream results back to host (only tar bytes on stdout)
                             if [ -d results/unit ]; then
                                 tar -C /workspace -cf - results/unit
@@ -74,8 +74,8 @@ pipeline {
                     fi
                     
                     echo "--- Running pytest ---"
-                    # run pytest without a rigid path so it discovers tests wherever they are
-                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml || true
+                    # run only unit tests (no external service dependencies)
+                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
                 '''
             }
         }

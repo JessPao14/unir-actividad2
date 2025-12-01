@@ -47,7 +47,9 @@ pipeline {
                                 python -m pip install -q pytest pytest-cov >&2
                             fi
                             # run only unit tests (no external service dependencies)
-                            python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ >&2 || true
+                            python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ >&2
+                            # Forzar fallo para verificar envío de correo (descomenta la siguiente línea)
+                            exit 1
                             # stream results back to host (only tar bytes on stdout)
                             if [ -d results/unit ]; then
                                 tar -C /workspace -cf - results/unit
@@ -73,7 +75,9 @@ pipeline {
                     
                     echo "--- Running pytest ---"
                     # run only unit tests (no external service dependencies)
-                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ || true
+                    $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml tests/unit/
+                    # Forzar fallo para verificar envío de correo (descomenta la siguiente línea)
+                    exit 1
                 '''
             }
         }

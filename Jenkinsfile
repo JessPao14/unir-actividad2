@@ -49,7 +49,7 @@ pipeline {
                             # run only unit tests (no external service dependencies)
                             python -m pytest --junitxml=results/unit/unit_result.xml tests/unit/ >&2
                             # Forzar fallo para verificar envío de correo (descomenta la siguiente línea)
-                            exit 1
+                            # exit 1
                             # stream results back to host (only tar bytes on stdout)
                             if [ -d results/unit ]; then
                                 tar -C /workspace -cf - results/unit
@@ -77,7 +77,7 @@ pipeline {
                     # run only unit tests (no external service dependencies)
                     $PYTHON_CMD -m pytest --junitxml=results/unit/unit_result.xml tests/unit/
                     # Forzar fallo para verificar envío de correo (descomenta la siguiente línea)
-                    exit 1
+                    # exit 1
                 '''
             }
         }
